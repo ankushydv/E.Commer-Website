@@ -14,7 +14,6 @@ import Badge from "@material-ui/core/Badge";
 import { Wrapper, StyledButton } from "./app.style";
 
 //Types//
-
 export type CartItemType = {
   id: number;
   category: string;
@@ -35,25 +34,45 @@ function App() {
   );
 
   const [cartItems, setCartItems] = useState([] as CartItemType[]);
+  console.log(cartItems);
 
   const [cartOpen, setCartOpen] = useState(false);
 
-  const getTotalItems = (items: CartItemType[]) => null;
+  const getTotalItems = (items: CartItemType[]) => {
+    return items.reduce((ack: number, item) => ack + item.amount, 0);
+  };
   const handleAddToCart = (clickedItem: CartItemType) => {
-    setCartItems(prev => {
+    setCartItems((prev) => {
       // 1. Is the item already added in the cart?
-      const isItemInCart = prev.find(item => item.id === clickedItem.id);
+      const isItemInCart = prev.find((item) => item.id === clickedItem.id);
 
-      if(isItemInCart){
-        return prev.map(item  => item.id === clickedItem.id  ? {...item, amount: item.amount +1} : item )
+      if (isItemInCart) {
+        return prev.map((item) =>
+          item.id === clickedItem.id
+            ? { ...item, amount: item.amount + 1 }
+            : item
+        );
       }
       // First time the item is added
       return [...prev, { ...clickedItem, amount: 1 }];
     });
+    // setCartItems((prevState) => {
+    //   const CheckItemInCart = prevState.find(
+    //     (item) => item.id === clickedItem.id
+    //   );
   };
-  const handleRemoveFromCart = () => null;
+  const handleRemoveFromCart = ( id: number) => {
+    setCartItems(prev => prev.reduce((ack, item) =>{
+      if(item.id === id){
+        if(item.amount === 1) return ack;
+        return [...ack, {...item , amount: item.amount -1}];
+      }else{
+        return[...ack , item]
+      }
+    }, [] as CartItemType[]))
+  }
 
-  console.log(data);
+  // console.log(data);
   if (isLoading)
     return (
       <div
